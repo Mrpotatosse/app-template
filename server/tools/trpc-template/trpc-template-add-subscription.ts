@@ -1,5 +1,6 @@
 import { $ } from "bun";
 import { Argument, Option, program } from "commander";
+import { join } from "path";
 import { eta } from "~/server/templates";
 
 program
@@ -10,9 +11,12 @@ program
             "create an event"
         ).makeOptionMandatory(true)
     )
+    .addOption(new Option("--extension", "file extension").default("ts"))
+    .addOption(new Option("--dir", "output directory").default("./route/"))
     .action(async (path, options) => {
+        const procedurePath = join(options.dir, `${path}.${options.extension}`);
         await Bun.write(
-            `${path}.ts`,
+            procedurePath,
             eta.render("./trpc-subscription", {
                 eventName: options.event,
             })
