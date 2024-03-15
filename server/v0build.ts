@@ -1,3 +1,4 @@
+import { logger } from "~/server/lib/log";
 import { routerBuild } from "~/server/lib/trpc/builder";
 
 await routerBuild({
@@ -14,4 +15,5 @@ await routerBuild({
     routerName: "webSocketRouter",
 });
 
+logger.info("v0build");
 // to do add build for prod

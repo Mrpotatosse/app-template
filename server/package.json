@@ -23,8 +23,8 @@
   "scripts": {
     "init": "source setup.sh && bun run tools:build && bun run build",
     "postgres:start": "sudo service postgresql start",
+    "tools:build": "bun run ./tools/build.ts",
     "prisma:build": "bunx prisma migrate dev --name init && bunx prisma generate",
-    "tools:build": "bun run tools/build.ts",
     "build": "bun run v0build.ts",
     "dev": "bun run build && bun run --hot --port 3030 index.ts"
   }

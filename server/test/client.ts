@@ -15,4 +15,4 @@ const tRPCClient = createTRPCClient<webSocketRouterType>({
     ],
 });
 
-await tRPCClient.test.mutate({});
+console.log(await tRPCClient.test.mutate({}));

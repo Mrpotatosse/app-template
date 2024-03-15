@@ -1,12 +1,13 @@
-import { Eta } from "eta";
+//import { Eta } from "eta";
 import { readdirSync } from "node:fs";
 import { join } from "path";
+import { eta } from "~/server/templates";
 
-const eta = new Eta({
+/*const eta = new Eta({
     views: join(import.meta.dir, "templates"),
     cache: true,
     cacheFilepaths: true,
-});
+});*/
 
 export type BuildOptions = {
     inputPath: string;

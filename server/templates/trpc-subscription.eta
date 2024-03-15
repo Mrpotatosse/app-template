@@ -1,0 +1,15 @@
+import { observable } from "@trpc/server/observable";
+import { publicProcedure } from "~/server/lib/trpc";
+
+export default publicProcedure.subscription(() => {
+    return observable((emit) => {
+        const onSend = (data: {}) => {
+            emit.next(data);
+        };
+
+        global.MainEventEmitter.on("<%= it.eventName ?? "eventName" %>", onSend);
+        return () => {
+            global.MainEventEmitter.off("<%= it.eventName ?? "eventName" %>", onSend);
+        };
+    });
+});

@@ -17,5 +17,5 @@ This project was created using `bun init` in bun v1.0.30. [Bun](https://bun.sh) 
 # starting dev
 
 ```bash
-source setup.sh
+bun run init
 ```
