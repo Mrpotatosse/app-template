@@ -1,0 +1,31 @@
+{
+  "name": "server",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prisma": "^5.11.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.11.0",
+    "@trpc/client": "next",
+    "@trpc/server": "next",
+    "commander": "^12.0.0",
+    "eta": "^3.2.0",
+    "superjson": "^2.2.1",
+    "trpc-bun-adapter": "^1.1.0",
+    "winston": "^3.12.0",
+    "zod": "^3.22.4"
+  },
+  "scripts": {
+    "init": "source setup.sh && bun run tools:build && bun run build",
+    "postgres:start": "sudo service postgresql start",
+    "prisma:build": "bunx prisma migrate dev --name init && bunx prisma generate",
+    "tools:build": "bun run tools/build.ts",
+    "build": "bun run v0build.ts",
+    "dev": "bun run build && bun run --hot --port 3030 index.ts"
+  }
+}
