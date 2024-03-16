@@ -1,7 +1,7 @@
 import { observable } from "@trpc/server/observable";
-import { publicProcedure } from "~/server/lib/trpc";
+import { <%= it.procedure %> } from "~/server/lib/trpc";
 
-export default publicProcedure.subscription(() => {
+export default <%= it.procedure %>.subscription(() => {
     return observable((emit) => {
         const onSend = (data: {}) => {
             emit.next(data);

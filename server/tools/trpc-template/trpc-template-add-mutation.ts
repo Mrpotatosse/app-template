@@ -10,7 +10,14 @@ program
     .addOption(new Option("--dir", "output directory").default("./route/"))
     .action(async (path, options) => {
         const procedurePath = join(options.dir, `${path}.${options.extension}`);
-        await Bun.write(procedurePath, eta.render("./trpc-mutation", {}));
+        await Bun.write(
+            procedurePath,
+            eta.render("./trpc-mutation", {
+                procedure: procedurePath.startsWith("ws")
+                    ? "webSocketPublicProcedure"
+                    : "apiPublicProcedure",
+            })
+        );
         if (options.event) {
             const dir = dirname(procedurePath);
             const name = basename(procedurePath);
@@ -21,6 +28,9 @@ program
                 )}`,
                 eta.render("./trpc-subscription", {
                     eventName: path,
+                    procedure: procedurePath.startsWith("ws")
+                        ? "webSocketPublicProcedure"
+                        : "apiPublicProcedure",
                 })
             );
         }

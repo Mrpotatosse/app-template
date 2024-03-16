@@ -1,7 +1,7 @@
 import { observable } from "@trpc/server/observable";
-import { publicProcedure } from "~/server/lib/trpc";
+import { webSocketPublicProcedure } from "~/server/lib/trpc";
 
-export default publicProcedure.subscription(() => {
+export default webSocketPublicProcedure.subscription(() => {
     return observable((emit) => {
         const onSend = (data: any) => {
             emit.next(data);

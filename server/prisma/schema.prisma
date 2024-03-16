@@ -14,5 +14,24 @@ datasource db {
 }
 
 model User {
-  id String @id @unique @default(uuid())
+  Id String @id @unique @default(uuid())
+
+  Email String @unique
+
+  DateOfCreation DateTime @default(now())
+
+  Accesses Access[]
+}
+
+model Access {
+  Id String @id @unique
+
+  UserId           String
+  DateOfExpiration DateTime
+
+  DateOfCreation DateTime @default(now())
+  Enabled        Boolean  @default(true)
+  Type           String   @default("web")
+
+  User User @relation(fields: [UserId], references: [Id])
 }

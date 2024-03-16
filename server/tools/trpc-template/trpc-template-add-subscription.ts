@@ -19,6 +19,9 @@ program
             procedurePath,
             eta.render("./trpc-subscription", {
                 eventName: options.event,
+                procedure: procedurePath.startsWith("ws")
+                    ? "webSocketPublicProcedure"
+                    : "apiPublicProcedure",
             })
         );
         await $`bun run build`;

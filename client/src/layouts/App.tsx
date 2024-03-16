@@ -6,8 +6,8 @@ export default function AppLayout() {
     return (
         <div
             className={cn(
-                "md:container md:flex-col",
-                "flex flex-wrap w-full h-full min-h-0 min-w-0 overflow-auto gap-1 p-1 flex-col-reverse"
+                "flex flex-wrap w-full h-full min-h-0 min-w-0 overflow-auto gap-1 p-1 flex-col-reverse",
+                "md:flex-col"
             )}
         >
             <HeaderLayout />

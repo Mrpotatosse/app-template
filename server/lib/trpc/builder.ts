@@ -7,6 +7,7 @@ export type BuildOptions = {
     inputAlias?: string;
     outputPath: string;
 
+    routerType: string;
     routerName: string;
 };
 
@@ -15,6 +16,7 @@ export function routerBuild({
     inputAlias,
     outputPath,
     routerName,
+    routerType,
 }: BuildOptions) {
     const files = readdirSync(inputPath, {
         recursive: true,
@@ -31,6 +33,7 @@ export function routerBuild({
     return Bun.write(
         outputPath,
         eta.render("./router", {
+            routerType,
             routerName,
             routes: files.map((file) => {
                 const name = file.name.slice(0, file.name.indexOf(".ts"));

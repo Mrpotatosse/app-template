@@ -6,6 +6,7 @@ await routerBuild({
     inputAlias: "~/server/route/api",
     outputPath: "./router/api.ts",
     routerName: "apiRouter",
+    routerType: "apiTRPCRouter",
 });
 
 await routerBuild({
@@ -13,6 +14,7 @@ await routerBuild({
     inputAlias: "~/server/route/ws",
     outputPath: "./router/ws.ts",
     routerName: "webSocketRouter",
+    routerType: "webSocketTRPCRouter",
 });
 
 logger.info("v0build");

@@ -18,4 +18,12 @@ This project was created using `bun init` in bun v1.0.30. [Bun](https://bun.sh) 
 
 ```bash
 bun run init
+bun run dev
+```
+
+# tools
+
+```bash
+# trpc procedure template
+trpc-template --help
 ```

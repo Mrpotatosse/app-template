@@ -1,7 +1,7 @@
 import {
     createTRPCClient,
     createWSClient,
-    httpBatchLink,
+    httpLink,
     wsLink,
 } from "@trpc/client";
 import SuperJSON from "superjson";
@@ -26,9 +26,10 @@ export function ApiProvider({
 }: ApiProviderProps) {
     const apiClient = createTRPCClient<apiRouterType>({
         links: [
-            httpBatchLink({
+            httpLink({
                 url: apiUrl,
-                fetch(url, opts) {
+                fetch: (url, opts) => {
+                    console.log(opts);
                     return fetch(url, {
                         ...opts,
                         credentials: "include",
