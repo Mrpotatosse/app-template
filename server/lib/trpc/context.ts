@@ -1,5 +1,5 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-import type { CreateBunContextOptions } from "trpc-bun-adapter";
+import type { CreateBunContextOptions } from "~/server/lib/trpc/bun-adapter";
 import { cors } from "~/server/lib/trpc/cors";
 
 export const createContext: (opts: CreateBunContextOptions) => {

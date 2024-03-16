@@ -10,7 +10,7 @@ export default function GoogleCallbackPage() {
 
     useEffect(() => {
         api["user/auth"]
-            .query({
+            .mutate({
                 code: searchParams.get("code") ?? "",
             })
             .then(console.log);

@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         apiUrl="http://localhost:3030/api"
         webSocketUrl="ws://localhost:3030/ws"
     >
-        <ThemeProvider storageKey="app-theme" defaultTheme="system">
+        <ThemeProvider storageKey="app-theme" defaultTheme="light">
             <RouterProvider router={router} />
         </ThemeProvider>
     </ApiProvider>

@@ -1,6 +1,5 @@
 import type { AnyTRPCRouter } from "@trpc/server";
 import type { Server } from "bun";
-//import { createBunHttpHandler, createBunWSHandler } from "trpc-bun-adapter";
 import { CustomError, CustomErrorCode } from "~/server/lib/error";
 import { logger } from "~/server/lib/log";
 import {
@@ -47,16 +46,6 @@ export class tRPCServer {
     serve(): this {
         this._server = Bun.serve({
             fetch: (request, server) => {
-                /*const url = new URL(request.url);
-
-                if (url.pathname.startsWith(this._webSocketEndpoint)) {
-                    if (server.upgrade(request, { data: { req: request } })) {
-                        return;
-                    }
-
-                    return new Response("upgrade failed", { status: 404 });
-                }*/
-
                 return createBunHttpHandler({
                     req: request,
                     router: this._apiRouter,
