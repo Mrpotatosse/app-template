@@ -6,7 +6,7 @@ import {
     createBunHttpHandler,
     createBunWSHandler,
 } from "~/server/lib/trpc/bun-adapter";
-import { createContext, createCorsContext } from "~/server/lib/trpc/context";
+import { createCorsContext } from "~/server/lib/trpc/context";
 
 export type tRPCServerOptions = {
     webSocketRouter: AnyTRPCRouter;
@@ -58,7 +58,6 @@ export class tRPCServer {
             websocket: createBunWSHandler({
                 router: this._webSocketRouter,
                 allowBatching: true,
-                createContext,
             }),
         });
         logger.info(

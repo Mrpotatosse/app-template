@@ -5,7 +5,6 @@ import {
     transformTRPCResponse,
     TRPCError,
     type AnyTRPCRouter,
-    type inferRouterContext,
 } from "@trpc/server";
 
 import type { BaseHandlerOptions } from "@trpc/server/http";
@@ -19,12 +18,7 @@ import {
 import type { ServerWebSocket, WebSocketHandler } from "bun";
 
 export type BunWSAdapterOptions<TRouter extends AnyTRPCRouter> =
-    BaseHandlerOptions<TRouter, Request> & {
-        createContext?: (params: {
-            req: Request;
-            client: ServerWebSocket<BunWSClientCtx>;
-        }) => Promise<unknown> | unknown;
-    };
+    BaseHandlerOptions<TRouter, Request>;
 
 export type BunWSClientCtx = {
     req: Request;
@@ -35,7 +29,7 @@ export type BunWSClientCtx = {
 export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
     opts: BunWSAdapterOptions<TRouter>
 ): WebSocketHandler<BunWSClientCtx> {
-    const { router, createContext } = opts;
+    const { router } = opts;
 
     const respond = (
         client: ServerWebSocket<unknown>,
@@ -53,43 +47,13 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
 
     return {
         async open(client) {
+            Object.freeze(client.data.req.headers);
             const { req } = client.data;
+
             const clientSubscriptions = new Map<
                 string | number,
                 Unsubscribable
             >();
-
-            const ctxPromise = createContext?.({ req, client });
-            let ctx: inferRouterContext<TRouter> | undefined = undefined;
-            await (async () => {
-                try {
-                    ctx = await ctxPromise;
-                } catch (cause) {
-                    const error = getTRPCErrorFromUnknown(cause);
-                    opts.onError?.({
-                        error,
-                        path: undefined,
-                        type: "unknown",
-                        ctx,
-                        req,
-                        input: undefined,
-                    });
-                    respond(client, {
-                        id: null,
-                        error: getErrorShape({
-                            config: router._def._config,
-                            error,
-                            type: "unknown",
-                            path: undefined,
-                            input: undefined,
-                            ctx,
-                        }),
-                    });
-
-                    // close in next tick
-                    setImmediate(() => client.close());
-                }
-            })();
 
             const stopSubscription = (
                 subscription: Unsubscribable,
@@ -113,7 +77,6 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                 msg: TRPCClientOutgoingMessage
             ) => {
                 const { id, jsonrpc } = msg;
-                /* istanbul ignore next -- @preserve */
                 if (id === null) {
                     throw new TRPCError({
                         code: "BAD_REQUEST",
@@ -131,14 +94,12 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                 const { path, input } = msg.params;
                 const type = msg.method;
                 try {
-                    await ctxPromise; // asserts context has been set
-
                     const result = await callTRPCProcedure({
                         procedures: router._def.procedures,
                         path,
                         input,
                         getRawInput: () => Promise.resolve(input),
-                        ctx,
+                        ctx: { req },
                         type,
                     });
 
@@ -180,7 +141,7 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                                 error,
                                 path,
                                 type,
-                                ctx,
+                                ctx: { req },
                                 req,
                                 input,
                             });
@@ -193,7 +154,7 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                                     type,
                                     path,
                                     input,
-                                    ctx,
+                                    ctx: client.data,
                                 }),
                             });
                         },
@@ -235,7 +196,14 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                 } catch (cause) {
                     // procedure threw an error
                     const error = getTRPCErrorFromUnknown(cause);
-                    opts.onError?.({ error, path, type, ctx, req, input });
+                    opts.onError?.({
+                        error,
+                        path,
+                        type,
+                        ctx: { req },
+                        req,
+                        input,
+                    });
                     respond(client, {
                         id,
                         jsonrpc,
@@ -245,7 +213,7 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                             type,
                             path,
                             input,
-                            ctx,
+                            ctx: { req },
                         }),
                     });
                 }
@@ -274,7 +242,7 @@ export function createBunWSHandler<TRouter extends AnyTRPCRouter>(
                     .map((raw) =>
                         parseTRPCMessage(raw, router._def._config.transformer)
                     )
-                    .map(client.data.handleRequest);
+                    .map(async (msg) => await client.data.handleRequest(msg));
 
                 await Promise.all(promises);
             } catch (cause) {

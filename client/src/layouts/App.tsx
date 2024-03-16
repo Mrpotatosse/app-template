@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import LoadingComponent from "~/client/components/custom/Loading";
@@ -10,17 +11,37 @@ export default function AppLayout() {
     const app = useAppState();
     const { api } = useApi();
     const [loading, setLoading] = useState(true);
+    const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
     useEffect(() => {
         setLoading(true);
-        api["user/auto"]
-            .mutate({})
+        api["user/refresh"]
+            .query({})
             .then((r) => {
-                app.user = r.user;
-                setLoading(false);
+                setExpiryDate(r.expiryDate);
+                api["user/auto"]
+                    .mutate({})
+                    .then((r) => {
+                        app.user = r.user;
+                        setLoading(false);
+                    })
+                    .catch(() => setLoading(false));
             })
             .catch(() => setLoading(false));
     }, []);
+
+    useEffect(() => {
+        if (expiryDate) {
+            const diff = dayjs(expiryDate).diff();
+
+            const to = setTimeout(() => {
+                api["user/refresh"].query({}).then((r) => {
+                    clearTimeout(to);
+                    setExpiryDate(r.expiryDate);
+                });
+            }, diff);
+        }
+    }, [expiryDate]);
 
     return loading ? (
         <LoadingComponent />

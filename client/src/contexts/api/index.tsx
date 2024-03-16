@@ -1,16 +1,12 @@
-import {
-    createTRPCClient,
-    createWSClient,
-    httpBatchLink,
-    wsLink,
-} from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { Component } from "react";
 import SuperJSON from "superjson";
 import {
     ApiProviderContext,
     ApiProviderState,
 } from "~/client/contexts/api/context";
+import { useWebSocket } from "~/client/contexts/api/hook";
 import type { apiRouterType } from "~/server/router/api";
-import type { webSocketRouterType } from "~/server/router/ws";
 
 type ApiProviderProps = {
     children: React.ReactNode;
@@ -18,13 +14,24 @@ type ApiProviderProps = {
     webSocketUrl: string;
 };
 
+export class Test extends Component {
+    constructor({
+        children,
+        apiUrl,
+        webSocketUrl,
+        ...props
+    }: ApiProviderProps) {
+        super(props);
+    }
+}
+
 export function ApiProvider({
     children,
     apiUrl,
     webSocketUrl,
     ...props
 }: ApiProviderProps) {
-    const apiClient = createTRPCClient<apiRouterType>({
+    const api = createTRPCClient<apiRouterType>({
         links: [
             httpBatchLink({
                 url: apiUrl,
@@ -39,23 +46,12 @@ export function ApiProvider({
         ],
     });
 
-    const ws = createWSClient({
-        url: webSocketUrl,
-    });
-
-    const webSocketClient = createTRPCClient({
-        links: [
-            wsLink<webSocketRouterType>({
-                client: ws,
-                transformer: SuperJSON,
-            }),
-        ],
-    });
+    const { webSocket, webSocketReconnect } = useWebSocket(webSocketUrl);
 
     const value: ApiProviderState = {
-        api: apiClient,
-        webSocket: webSocketClient,
-        webSocketReconnect: () => ws.close(),
+        api,
+        webSocket,
+        webSocketReconnect,
     };
 
     return (

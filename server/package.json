@@ -30,6 +30,6 @@
     "tools:build": "bun run ./tools/build.ts",
     "prisma:build": "bunx prisma migrate dev --name init && bunx prisma generate",
     "build": "bun run v0build.ts",
-    "dev": "bun run build && bun run --hot --port 3030 index.ts"
+    "dev": "bun run build && bun run --watch --port 3030 index.ts"
   }
 }

@@ -5,7 +5,7 @@ import type { webSocketRouterType } from "~/server/router/ws";
 
 export type ApiProviderState = {
     api: CreateTRPCClient<apiRouterType>;
-    webSocket: CreateTRPCClient<webSocketRouterType>;
+    webSocket: () => CreateTRPCClient<webSocketRouterType>;
     webSocketReconnect: () => void;
 };
 
