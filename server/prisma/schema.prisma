@@ -17,6 +17,8 @@ model User {
   Id String @id @unique @default(uuid())
 
   Email String @unique
+  ProfilePicture String 
+  RefreshToken String 
 
   DateOfCreation DateTime @default(now())
 
@@ -27,7 +29,7 @@ model Access {
   Id String @id @unique
 
   UserId           String
-  DateOfExpiration DateTime
+  DateOfExpiration DateTime 
 
   DateOfCreation DateTime @default(now())
   Enabled        Boolean  @default(true)

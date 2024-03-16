@@ -6,4 +6,4 @@ const GoogleClient = new OAuth2Client(
     Bun.env.GOOGLE_REDIRECT
 );
 
-export default GoogleClient;
+export { GoogleClient };

@@ -1,6 +1,7 @@
 export enum CustomErrorCode {
     Test = 0,
     NotInitialized = 1,
+    PropertyNotFound = 2,
 }
 
 export class CustomError extends Error {

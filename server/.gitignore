@@ -3,6 +3,7 @@
 # Builded folder
 tools/cli/
 router/
+prisma/migrations
 
 # Logs
 
