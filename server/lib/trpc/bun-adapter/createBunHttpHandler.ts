@@ -18,6 +18,19 @@ export function createBunHttpHandler<TRouter extends AnyTRPCRouter>(
     return (request: Request, server: Server) => {
         const url = new URL(request.url);
 
+        if (request.method.toUpperCase() === "OPTIONS") {
+            return new Response("success", {
+                status: 200,
+                headers: {
+                    "Access-Control-Allow-Origin":
+                        request.headers.get("origin") ?? "*",
+                    "Access-Control-Allow-Credentials": "true",
+                    "Access-Control-Allow-Methods": "OPTIONS",
+                    "Access-Control-Allow-Headers": "content-type",
+                },
+            });
+        }
+
         if (opts.wsEndpoint && url.pathname.startsWith(opts.wsEndpoint)) {
             if (server.upgrade(request, { data: { req: request } })) {
                 return;

@@ -19,15 +19,7 @@ export default function GoogleCallbackPage() {
     return (
         <div className="flex justify-center items-center w-full h-full min-h-0 min-w-0">
             {t("app.loading...")}
-            <button
-                onClick={() =>
-                    api["user/auth"]
-                        .query({
-                            code: searchParams.get("code") ?? "",
-                        })
-                        .then(console.log)
-                }
-            >
+            <button onClick={() => api.post.mutate({}).then(console.log)}>
                 zob
             </button>
         </div>
